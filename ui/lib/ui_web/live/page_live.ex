@@ -9,10 +9,7 @@ defmodule UiWeb.PageLive do
       socket
       |> assign(current_time_second: System.monotonic_time(:second))
       |> assign(serial_number: get_serial_number())
-      |> assign(level: 75000)
-      |> assign(speed: 0)
-
-      Pigpiox.Pwm.hardware_pwm(12, 50, 75000)
+      |> assign(speed: Loco.get)
 
     if connected?(socket) do
       schedule_refresh()
@@ -24,7 +21,10 @@ defmodule UiWeb.PageLive do
   @impl Phoenix.LiveView
   def handle_info(:tick, socket) do
     schedule_refresh()
-    socket = assign(socket, current_time_second: System.monotonic_time(:second))
+    socket =
+      socket
+      |> assign(current_time_second: System.monotonic_time(:second))
+      |> assign(speed: Loco.get)
 
     {:noreply, socket}
   end
@@ -32,29 +32,20 @@ defmodule UiWeb.PageLive do
   #range 50000 - 75000 - 100000 (delta 25000)
   @impl true
   def handle_event("stop", _value, socket) do
-    Pigpiox.Pwm.hardware_pwm(12, 50, 75000)
-    {:noreply, socket |> assign(level: 75000) |> assign(speed: 0)}
+    Loco.set(:stop)
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("inc", _value, socket) do
-    speed = socket.assigns[:speed] + 20
-    assign(socket, speed: speed)
-
-    current = socket.assigns[:level]
-    next = current - 5000
-    Pigpiox.Pwm.hardware_pwm(12, 50, next)
-    {:noreply, socket |> assign(level: next) |> assign(speed: speed)}
+    Loco.set(:acc)
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("dec", _value, socket) do
-    speed = socket.assigns[:speed] - 20
-
-    current = socket.assigns[:level]
-    next = current + 5000
-    Pigpiox.Pwm.hardware_pwm(12, 50, next)
-    {:noreply, socket |> assign(level: next) |> assign(speed: speed)}
+    Loco.set(:dec)
+    {:noreply, socket}
   end
 
   defp schedule_refresh() do
