@@ -7,9 +7,8 @@ defmodule UiWeb.PageLive do
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> assign(current_time_second: System.monotonic_time(:second) |> Convert.sec_to_str)
-      |> assign(serial_number: get_serial_number())
-      |> assign(speed: Loco.get)
+      |> assign(current_runtime: System.monotonic_time(:second) |> Convert.sec_to_str)
+      |> assign(speed: LocoSpeed.get)
 
     if connected?(socket) do
       schedule_refresh()
@@ -23,39 +22,32 @@ defmodule UiWeb.PageLive do
     schedule_refresh()
     socket =
       socket
-      |> assign(current_time_second: System.monotonic_time(:second) |> Convert.sec_to_str)
-      |> assign(speed: Loco.get)
+      |> assign(current_runtime: System.monotonic_time(:second) |> Convert.sec_to_str)
+      |> assign(speed: LocoSpeed.get)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("stop", _value, socket) do
-    Loco.set(:stop)
+    LocoSpeed.set(:stop)
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("inc", _value, socket) do
-    Loco.set(:dec)
+    LocoSpeed.set(:dec) # TODO invert or make configurable
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("dec", _value, socket) do
-    Loco.set(:acc)
+    LocoSpeed.set(:acc)
     {:noreply, socket}
   end
 
   defp schedule_refresh() do
     Process.send_after(self(), :tick, @refresh_interval_ms)
-  end
-
-  defp get_serial_number() do
-    case Code.ensure_loaded(Nerves.Runtime) do
-      {:module, _} -> Nerves.Runtime.serial_number()
-      _error -> "Unavailable"
-    end
   end
 
 end

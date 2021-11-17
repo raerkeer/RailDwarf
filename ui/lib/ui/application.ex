@@ -16,7 +16,7 @@ defmodule Ui.Application do
       UiWeb.Endpoint,
       # Start a worker by calling: Ui.Worker.start_link(arg)
       # {Ui.Worker, arg}
-      Loco
+      LocoSpeed
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

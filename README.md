@@ -1,22 +1,4 @@
-# Hello Phoenix
-
-This example demonstrates a basic poncho project for deploying a [Phoenix
-Framework]-based application to a Nerves device. A "poncho project" is similar
-to an umbrella project except that it's actually multiple separate-but-related
-Elixir apps that use `path` dependencies instead of `in_umbrella` dependencies.
-You can read more about the motivations behind this concept on the
-embedded-elixir blog post about [Poncho Projects].
-
-## Hardware
-
-This example serves a Phoenix-based web page over the network. The steps below
-assume you are using a Raspberry Pi Zero, which allows you to connect a single
-USB cable to the port marked "USB" to get both network and serial console
-access to the device. By default, this example will use the virtual Ethernet
-interface provided by the USB cable, assign an IP address automatically, and
-make it discoverable using mDNS (Bonjour). For more information about how to
-configure the network settings for your environment, including WiFi settings,
-see the [`vintage_net` documentation](https://hexdocs.pm/vintage_net/).
+# RailDwarf loco remote
 
 ## How to Use this Repository
 
@@ -49,11 +31,6 @@ see the [`vintage_net` documentation](https://hexdocs.pm/vintage_net/).
 
     ```bash
     export MIX_TARGET=rpi0
-
-    # If you're using WiFi:
-    #
-    #   export NERVES_NETWORK_SSID=your_wifi_name
-    #   export NERVES_NETWORK_PSK=your_wifi_password
     ```
 
 6. Get dependencies, build firmware, and burn it to an SD card:
@@ -66,15 +43,5 @@ see the [`vintage_net` documentation](https://hexdocs.pm/vintage_net/).
 
 7. Insert the SD card into your target board and connect the USB cable or otherwise power it on
 8. Wait for it to finish booting (5-10 seconds)
-9. Open a browser window on your host computer to `http://nerves.local/`
-10. You should see a "Welcome to Phoenix!" page
-
-[Phoenix Framework]: http://www.phoenixframework.org/
-[Poncho Projects]: http://embedded-elixir.com/post/2017-05-19-poncho-projects/
-
-## Learn More
-
-* Official docs: https://hexdocs.pm/nerves/getting-started.html
-* Official website: https://nerves-project.org/
-* Discussion Slack elixir-lang #nerves ([Invite](https://elixir-slackin.herokuapp.com/))
-* Source: https://github.com/nerves-project/nerves
+9. Open a browser window on your host computer to `192.168.0.1`
+10. You should see the controller UI
