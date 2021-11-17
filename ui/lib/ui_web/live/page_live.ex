@@ -7,7 +7,7 @@ defmodule UiWeb.PageLive do
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> assign(current_time_second: System.monotonic_time(:second))
+      |> assign(current_time_second: System.monotonic_time(:second) |> Convert.sec_to_str)
       |> assign(serial_number: get_serial_number())
       |> assign(speed: Loco.get)
 
@@ -23,13 +23,12 @@ defmodule UiWeb.PageLive do
     schedule_refresh()
     socket =
       socket
-      |> assign(current_time_second: System.monotonic_time(:second))
+      |> assign(current_time_second: System.monotonic_time(:second) |> Convert.sec_to_str)
       |> assign(speed: Loco.get)
 
     {:noreply, socket}
   end
 
-  #range 50000 - 75000 - 100000 (delta 25000)
   @impl true
   def handle_event("stop", _value, socket) do
     Loco.set(:stop)
@@ -38,13 +37,13 @@ defmodule UiWeb.PageLive do
 
   @impl true
   def handle_event("inc", _value, socket) do
-    Loco.set(:acc)
+    Loco.set(:dec)
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("dec", _value, socket) do
-    Loco.set(:dec)
+    Loco.set(:acc)
     {:noreply, socket}
   end
 
@@ -58,4 +57,5 @@ defmodule UiWeb.PageLive do
       _error -> "Unavailable"
     end
   end
+
 end
