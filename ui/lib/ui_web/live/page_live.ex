@@ -1,7 +1,7 @@
 defmodule UiWeb.PageLive do
   use UiWeb, :live_view
 
-  @refresh_interval_ms 1000
+  @refresh_interval_ms 500
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
