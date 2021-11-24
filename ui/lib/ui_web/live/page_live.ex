@@ -11,7 +11,7 @@ defmodule UiWeb.PageLive do
       |> assign(speed: LocoSpeed.get)
 
     if connected?(socket) do
-      schedule_refresh()
+      :timer.send_interval(@refresh_interval_ms, self(), :tick)
     end
 
     {:ok, socket}
@@ -19,7 +19,6 @@ defmodule UiWeb.PageLive do
 
   @impl Phoenix.LiveView
   def handle_info(:tick, socket) do
-    schedule_refresh()
     socket =
       socket
       |> assign(current_runtime: System.monotonic_time(:second) |> Convert.sec_to_str)
@@ -44,10 +43,6 @@ defmodule UiWeb.PageLive do
   def handle_event("dec", _value, socket) do
     LocoSpeed.set(:acc)
     {:noreply, socket}
-  end
-
-  defp schedule_refresh() do
-    Process.send_after(self(), :tick, @refresh_interval_ms)
   end
 
 end
