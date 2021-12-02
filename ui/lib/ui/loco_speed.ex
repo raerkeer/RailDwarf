@@ -31,8 +31,8 @@ defmodule LocoSpeed do
   def handle_call(:get_speed, _from, speed) do
     percent =
     cond do
-      speed.current > @pwm_neutral -> (@pwm_neutral - speed.current) / 250
-      speed.current < @pwm_neutral -> -(speed.current - @pwm_neutral) / 250
+      speed.current > @pwm_neutral -> -(speed.current - @pwm_neutral) / 250
+      speed.current < @pwm_neutral -> (@pwm_neutral - speed.current) / 250
       speed.current == @pwm_neutral -> 0
     end
 
@@ -95,7 +95,9 @@ defmodule LocoSpeed do
   end
 
   defp set_pwm(%Speed{current: current}) do
-    Pigpiox.Pwm.hardware_pwm(@gpio_pin, @pwm_frequency, current)
+    if unquote(Mix.env == :prod) do
+      Pigpiox.Pwm.hardware_pwm(@gpio_pin, @pwm_frequency, current)
+    end
   end
 
 end

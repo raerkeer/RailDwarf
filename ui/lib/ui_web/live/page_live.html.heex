@@ -4,4 +4,20 @@
   <input type="button" class="button speed" value="+" phx-click="inc">
   <input type="button" class="button stop" value="stop" phx-click="stop">
   <input type="button" class="button speed" value="-" phx-click="dec">
+  <input type="button" class="button settings" value="settings" phx-click="toggle-modal">
 </section>
+<%= if @show_modal do %>
+<section>
+  <div class="phx-modal" phx-capture-click="toggle-modal">
+    <div class="phx-modal-content">
+        <a href="#" phx-click="toggle-modal" class="phx-modal-close">&times;</a>
+        <label for="cb_reverse">Reverse</label>
+        <%= if @reverse do %>
+        <input phx-click="reverse" type="checkbox" id="cb_reverse" checked/>
+        <% else %>
+        <input phx-click="reverse" type="checkbox" id="cb_reverse"/>
+        <% end %>
+    </div>
+  </div>
+</section>
+<% end %>
