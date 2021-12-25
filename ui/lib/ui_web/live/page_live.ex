@@ -75,7 +75,7 @@ defmodule UiWeb.PageLive do
 
   def handle_event("reverse", _, socket) do
     reverse = !socket.assigns.reverse
-    File.write(@configfile, reverse)
+    File.write(@configfile, Kernel.inspect(reverse))
     {:noreply, assign(socket, :reverse, reverse)}
   end
 

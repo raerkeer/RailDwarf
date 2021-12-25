@@ -7,6 +7,33 @@ defmodule Firmware.Application do
 
   @impl true
   def start(_type, _args) do
+
+    VintageNet.configure("wlan0",%{
+      dhcpd: %{
+        end: {192, 168, 0, 254},
+        max_leases: 235,
+        options: %{
+          dns: [{192, 168, 0, 1}],
+          domain: "raildwarf.local",
+          router: [{192, 168, 0, 1}],
+          search: ["raildwarf.local"],
+          subnet: {255, 255, 255, 0}
+        },
+        start: {192, 168, 0, 20}
+      },
+      dnsd: %{
+        records: [
+          {"raildwarf.local", {192, 168, 0, 1}},
+          {"*", {192, 168, 0, 1}}
+        ]
+      },
+      ipv4: %{address: {192, 168, 0, 1}, method: :static, prefix_length: 24},
+      type: VintageNetWiFi,
+      vintage_net_wifi: %{
+        networks: [%{key_mgmt: :none, mode: :ap, ssid: "raildwarf_#{Enum.random(1000..9999)}"}]
+      }
+    })
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Firmware.Supervisor]

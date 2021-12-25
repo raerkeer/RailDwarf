@@ -1,7 +1,7 @@
 import Config
 
 config :ui, UiWeb.Endpoint,
-  url: [host: "nerves.local"],
+  url: [host: "raildwarf.local"],
   http: [port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: "HEY05EB1dFVSu6KykKHuS4rQPQzSHv4F7mGVB/gnDLrIu75wE/ytBXy2TaL3A6RA",
@@ -69,37 +69,7 @@ config :nerves_ssh,
 config :vintage_net,
   regulatory_domain: "CH",
   config: [
-    {"usb0", %{type: VintageNetDirect}},
-    {"eth0",
-    %{
-      type: VintageNetEthernet,
-      ipv4: %{method: :dhcp}
-    }},
-    {"wlan0", %{
-      dhcpd: %{
-        end: {192, 168, 0, 254},
-        max_leases: 235,
-        options: %{
-          dns: [{192, 168, 0, 1}],
-          domain: "raildwarf.ui",
-          router: [{192, 168, 0, 1}],
-          search: ["raildwarf.ui"],
-          subnet: {255, 255, 255, 0}
-        },
-        start: {192, 168, 0, 20}
-      },
-      dnsd: %{
-        records: [
-          {"raildwarf.ui", {192, 168, 0, 1}},
-          {"*", {192, 168, 0, 1}}
-        ]
-      },
-      ipv4: %{address: {192, 168, 0, 1}, method: :static, prefix_length: 24},
-      type: VintageNetWiFi,
-      vintage_net_wifi: %{
-        networks: [%{key_mgmt: :none, mode: :ap, ssid: "raildwarf_wifi"}]
-      }
-    }}
+    {"usb0", %{type: VintageNetDirect}}
   ]
 
 config :mdns_lite,
@@ -109,7 +79,7 @@ config :mdns_lite,
   # "nerves.local" for convenience. If more than one Nerves device is on the
   # network, delete "nerves" from the list.
 
-  host: [:hostname, "nerves"],
+  host: [:hostname, "raildwarf"],
   ttl: 120,
 
   # Advertise the following services over mDNS.
