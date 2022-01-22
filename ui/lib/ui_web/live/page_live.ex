@@ -27,6 +27,10 @@ defmodule UiWeb.PageLive do
       |> assign(speed: LocoSpeed.get)
       |> assign(show_modal: false)
       |> assign(reverse: reverse)
+      |> assign(speed1: 40)
+      |> assign(speed2: 60)
+      |> assign(speed3: 80)
+      |> assign(speed4: 100)
 
     if connected?(socket) do
       :timer.send_interval(@refresh_interval_ms, self(), :tick)
@@ -77,6 +81,18 @@ defmodule UiWeb.PageLive do
     reverse = !socket.assigns.reverse
     File.write(@configfile, Kernel.inspect(reverse))
     {:noreply, assign(socket, :reverse, reverse)}
+  end
+
+  def handle_event("speed", %{"speed1"=>speed1, "speed2"=>speed2, "speed3"=>speed3, "speed4"=>speed4}, socket) do
+
+    socket =
+      socket
+      |> assign(:speed1, speed1)
+      |> assign(:speed2, speed2)
+      |> assign(:speed3, speed3)
+      |> assign(:speed4, speed4)
+
+    {:noreply, socket}
   end
 
 end

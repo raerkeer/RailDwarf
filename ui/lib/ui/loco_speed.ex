@@ -40,38 +40,22 @@ defmodule LocoSpeed do
   end
 
   @impl true
-  def handle_cast(:acc, old_speed) when old_speed.target == @pwm_max do
-    {:noreply, old_speed}
-  end
-  def handle_cast(:acc, old_speed) when old_speed.target == @pwm_neutral do
-    new_speed = %Speed{old_speed | target: old_speed.target + 10000} # because of the non linear esc...
-    schedule_speed()
-    {:noreply, new_speed}
-  end
   def handle_cast(:acc, old_speed) do
-    new_speed = %Speed{old_speed | target: old_speed.target + 5000}
+    new_speed = Speed.next_target(old_speed)
     schedule_speed()
     {:noreply, new_speed}
   end
 
   @impl true
-  def handle_cast(:dec, old_speed) when old_speed.target ==  @pwm_min do
-    {:noreply, old_speed}
-  end
-  def handle_cast(:dec, old_speed) when old_speed.target == @pwm_neutral do
-    new_speed = %Speed{old_speed | target: old_speed.target - 10000}
-    schedule_speed()
-    {:noreply, new_speed}
-  end
   def handle_cast(:dec, old_speed) do
-    new_speed = %Speed{old_speed | target: old_speed.target - 5000}
+    new_speed = Speed.prev_target(old_speed)
     schedule_speed()
     {:noreply, new_speed}
   end
 
   @impl true
   def handle_cast(:stop, old_speed) do
-    new_speed = %Speed{old_speed | target: @pwm_neutral}
+    new_speed = Speed.stop(old_speed)
     schedule_speed()
     {:noreply, new_speed}
   end

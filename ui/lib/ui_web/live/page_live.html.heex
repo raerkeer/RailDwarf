@@ -17,6 +17,12 @@
         <% else %>
         <input phx-click="reverse" type="checkbox" id="cb_reverse"/>
         <% end %>
+        <form phx-change="speed">
+        <input type="number" min="0" max="100" name="speed1" value={@speed1}/>
+        <input type="number" min="0" max="100" name="speed2" value={@speed2}/>
+        <input type="number" min="0" max="100" name="speed3" value={@speed3}/>
+        <input type="number" min="0" max="100" name="speed4" value={@speed4}/>
+        </form>
     </div>
   </div>
 </section>
