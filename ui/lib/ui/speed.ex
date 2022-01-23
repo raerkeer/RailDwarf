@@ -16,14 +16,19 @@ defmodule Speed do
     end
   end
 
-  defp pwm_from_percent(percent) when percent == 0 do
+  def pwm_from_percent(percent) when percent == 0 do
     0
   end
-  defp pwm_from_percent(percent) when percent > 0 do
+  def pwm_from_percent(percent) do
     @pwm_neutral + percent * 250
   end
-  defp pwm_from_percent(percent) when percent < 0 do
-    @pwm_neutral - percent * 250
+
+  def percent_from_pwm(pwm) do
+    cond do
+      pwm > @pwm_neutral -> (pwm - @pwm_neutral) / 250
+      pwm < @pwm_neutral -> -(@pwm_neutral - pwm) / 250
+      pwm == @pwm_neutral -> 0
+    end
   end
 
   defp next_atom(cur) do

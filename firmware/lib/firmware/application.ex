@@ -7,6 +7,12 @@ defmodule Firmware.Application do
 
   @impl true
   def start(_type, _args) do
+    name_loaded = LocoConfig.load().name
+    name =
+      cond do
+        String.length(name_loaded) > 0 -> name_loaded
+        true -> "#{Enum.random(1000..9999)}"
+      end
 
     VintageNet.configure("wlan0",%{
       dhcpd: %{
@@ -30,7 +36,7 @@ defmodule Firmware.Application do
       ipv4: %{address: {192, 168, 0, 1}, method: :static, prefix_length: 24},
       type: VintageNetWiFi,
       vintage_net_wifi: %{
-        networks: [%{key_mgmt: :none, mode: :ap, ssid: "raildwarf_#{Enum.random(1000..9999)}"}]
+        networks: [%{key_mgmt: :none, mode: :ap, ssid: "raildwarf_"<>name}]
       }
     })
 

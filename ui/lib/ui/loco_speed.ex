@@ -20,6 +20,10 @@ defmodule LocoSpeed do
     GenServer.call(LocoSpeedServer, :get_speed)
   end
 
+  def set_speeds(%LocoConfig{} = settings) do
+    GenServer.cast(LocoSpeedServer, settings)
+  end
+
   # Server Callbacks
   @impl true
   def init(speed) do
@@ -37,6 +41,12 @@ defmodule LocoSpeed do
     end
 
     {:reply, percent, speed}
+  end
+
+  @impl true
+  def handle_cast(%LocoConfig{} = settings, speed) do
+    new_speed = %{speed | neg4: settings.neg4, neg3: settings.neg3, neg2: settings.neg2, neg1: settings.neg1, pos1: settings.pos1, pos2: settings.pos2, pos3: settings.pos3, pos4: settings.pos4}
+    {:noreply, new_speed}
   end
 
   @impl true

@@ -2,24 +2,15 @@ defmodule UiWeb.PageLive do
   use UiWeb, :live_view
 
   @refresh_interval_ms 500
-  @configfile "/data/settings"
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    settings =
-    case File.exists?(@configfile) do
-      true ->
-        File.read!(@configfile)
-      false ->
-        File.write(@configfile, "false")
-        "false"
-    end
+    settings = LocoConfig.load()
+    %LocoConfig{name: name, reverse: reverse} = settings
 
-    reverse =
-    case settings do
-      "false" -> false
-      "true" -> true
-    end
+    LocoSpeed.set_speeds(settings)
+
+    percents = LocoConfig.get_percent(settings)
 
     socket =
       socket
@@ -27,10 +18,11 @@ defmodule UiWeb.PageLive do
       |> assign(speed: LocoSpeed.get)
       |> assign(show_modal: false)
       |> assign(reverse: reverse)
-      |> assign(speed1: 40)
-      |> assign(speed2: 60)
-      |> assign(speed3: 80)
-      |> assign(speed4: 100)
+      |> assign(name: name)
+      |> assign(speed1: percents.speed1)
+      |> assign(speed2: percents.speed2)
+      |> assign(speed3: percents.speed3)
+      |> assign(speed4: percents.speed4)
 
     if connected?(socket) do
       :timer.send_interval(@refresh_interval_ms, self(), :tick)
@@ -79,19 +71,39 @@ defmodule UiWeb.PageLive do
 
   def handle_event("reverse", _, socket) do
     reverse = !socket.assigns.reverse
-    File.write(@configfile, Kernel.inspect(reverse))
+    settings = %{LocoConfig.load() | reverse: reverse}
+    LocoConfig.write(settings)
     {:noreply, assign(socket, :reverse, reverse)}
   end
 
-  def handle_event("speed", %{"speed1"=>speed1, "speed2"=>speed2, "speed3"=>speed3, "speed4"=>speed4}, socket) do
+  def handle_event("name", %{"name" => name}, socket) do
+    settings = %{LocoConfig.load() | name: name}
+    LocoConfig.write(settings)
+    {:noreply, assign(socket, :name, name)}
+  end
 
+  defp str_to_int(val) do
+    case Integer.parse(val) do
+      :error -> 0
+      {x, _} -> x
+    end
+  end
+
+  def handle_event("speed", %{"speed1"=>speed1, "speed2"=>speed2, "speed3"=>speed3, "speed4"=>speed4}, socket) do
+    s1 = str_to_int(speed1)
+    s2 = str_to_int(speed2)
+    s3 = str_to_int(speed3)
+    s4 = str_to_int(speed4)
     socket =
       socket
-      |> assign(:speed1, speed1)
-      |> assign(:speed2, speed2)
-      |> assign(:speed3, speed3)
-      |> assign(:speed4, speed4)
+      |> assign(:speed1, s1)
+      |> assign(:speed2, s2)
+      |> assign(:speed3, s3)
+      |> assign(:speed4, s4)
 
+      settings = LocoConfig.set_percent(s1, s2, s3, s4)
+      LocoSpeed.set_speeds(settings)
+      LocoConfig.write(settings)
     {:noreply, socket}
   end
 
