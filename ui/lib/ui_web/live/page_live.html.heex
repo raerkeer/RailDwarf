@@ -11,21 +11,22 @@
   <div class="phx-modal" phx-capture-click="toggle-modal">
     <div class="phx-modal-content">
         <a href="#" phx-click="toggle-modal" class="phx-modal-close">&times;</a>
-        <label for="cb_reverse">Reverse</label>
-        <%= if @reverse do %>
-        <input phx-click="reverse" type="checkbox" id="cb_reverse" checked/>
-        <% else %>
-        <input phx-click="reverse" type="checkbox" id="cb_reverse"/>
-        <% end %>
-        <form phx-change="speed">
+        <form phx-change="name">
+        <input type="text" name="name" placeholder="Lokname" value={@name}/>
+        </form>
+        <label for="form_speed">Speeds in %</label>
+        <form id="form_speed" phx-change="speed">
         <input type="number" min="0" max="100" name="speed1" value={@speed1}/>
         <input type="number" min="0" max="100" name="speed2" value={@speed2}/>
         <input type="number" min="0" max="100" name="speed3" value={@speed3}/>
         <input type="number" min="0" max="100" name="speed4" value={@speed4}/>
         </form>
-        <form phx-change="name">
-        <input type="text" name="name" placeholder="Lokname" value={@name}/>
-        </form>
+        <label for="cb_reverse">Reverse direction</label>
+        <%= if @reverse do %>
+        <input phx-click="reverse" type="checkbox" id="cb_reverse" checked/>
+        <% else %>
+        <input phx-click="reverse" type="checkbox" id="cb_reverse"/>
+        <% end %>
     </div>
   </div>
 </section>
