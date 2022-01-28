@@ -11,8 +11,23 @@ defmodule Speed do
   def next_speed(%Speed{current: current, target: target} = speed) when is_map(speed) do
     cond do
       current == target -> speed
-      current < target -> %{speed | current: current + @acceleration}
-      current > target -> %{speed | current: current - @acceleration}
+      current < target -> %{speed | current: accelerate(current, target)}
+      current > target -> %{speed | current: decelerate(current, target)}
+    end
+  end
+
+  defp accelerate(current, target) do
+    new_speed = current + @acceleration
+    cond do
+      new_speed >= target -> target
+      new_speed < target -> new_speed
+    end
+  end
+  defp decelerate(current, target) do
+    new_speed = current - @acceleration
+    cond do
+      new_speed <= target -> target
+      new_speed > target -> new_speed
     end
   end
 
